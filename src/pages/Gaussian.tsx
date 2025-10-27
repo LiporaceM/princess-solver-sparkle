@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Sparkles, Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import barbieCalc3 from "@/assets/barbie-calculator-3.png";
 
 const Gaussian = () => {
   const [size, setSize] = useState(3);
@@ -45,7 +46,7 @@ const Gaussian = () => {
       const n = size;
       const augmentedMatrix = matrix.map(row => [...row]);
       
-      steps.push("Initial augmented matrix created");
+      steps.push("Matriz aumentada inicial criada");
 
       // Forward elimination
       for (let i = 0; i < n; i++) {
@@ -59,19 +60,19 @@ const Gaussian = () => {
         
         if (maxRow !== i) {
           [augmentedMatrix[i], augmentedMatrix[maxRow]] = [augmentedMatrix[maxRow], augmentedMatrix[i]];
-          steps.push(`Swapped row ${i + 1} with row ${maxRow + 1} for better numerical stability`);
+          steps.push(`Linha ${i + 1} trocada com linha ${maxRow + 1} para melhor estabilidade numérica`);
         }
 
         // Check for zero pivot
         if (Math.abs(augmentedMatrix[i][i]) < 1e-10) {
-          toast.error("System has no unique solution (zero pivot detected)");
+          toast.error("Sistema não possui solução única (pivô zero detectado)");
           return;
         }
 
         // Eliminate below
         for (let k = i + 1; k < n; k++) {
           const factor = augmentedMatrix[k][i] / augmentedMatrix[i][i];
-          steps.push(`Row ${k + 1} = Row ${k + 1} - (${factor.toFixed(4)}) × Row ${i + 1}`);
+          steps.push(`Linha ${k + 1} = Linha ${k + 1} - (${factor.toFixed(4)}) × Linha ${i + 1}`);
           
           for (let j = i; j <= n; j++) {
             augmentedMatrix[k][j] -= factor * augmentedMatrix[i][j];
@@ -81,7 +82,7 @@ const Gaussian = () => {
 
       // Back substitution
       const x: number[] = new Array(n);
-      steps.push("Starting back substitution");
+      steps.push("Iniciando substituição reversa");
       
       for (let i = n - 1; i >= 0; i--) {
         x[i] = augmentedMatrix[i][n];
@@ -94,9 +95,9 @@ const Gaussian = () => {
 
       setSolution(x);
       setSteps(steps);
-      toast.success("System solved successfully! ✨");
+      toast.success("Sistema resolvido com sucesso! ✨");
     } catch (error) {
-      toast.error("Error solving the system. Please check your inputs.");
+      toast.error("Erro ao resolver o sistema. Por favor, verifique suas entradas.");
     }
   };
 
@@ -106,24 +107,29 @@ const Gaussian = () => {
         <Link to="/">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Kingdom
+            Voltar ao Reino
           </Button>
         </Link>
 
-        <div className="text-center mb-8">
-          <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
-            Gaussian Elimination
-          </h1>
-          <p className="text-muted-foreground">
-            Solve linear systems with princely efficiency
-          </p>
+        <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
+              Eliminação Gaussiana
+            </h1>
+            <p className="text-muted-foreground">
+              Resolva sistemas lineares com eficiência principesca
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <img src={barbieCalc3} alt="Barbie Calculadora" className="w-48 h-48 object-contain animate-float drop-shadow-xl" />
+          </div>
         </div>
 
         <Card className="p-8 border-2 border-accent/20 shadow-princess mb-8">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <Label className="text-base font-medium whitespace-nowrap">
-                System Size:
+                Tamanho do Sistema:
               </Label>
               <div className="flex items-center gap-2">
                 <Button
@@ -148,7 +154,7 @@ const Gaussian = () => {
 
             <div>
               <Label className="text-base font-medium mb-3 block">
-                Augmented Matrix [A|b]
+                Matriz Aumentada [A|b]
               </Label>
               <div className="overflow-x-auto">
                 <div className="inline-block min-w-full">
@@ -173,7 +179,7 @@ const Gaussian = () => {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                Enter coefficients. The last column represents the constants (b).
+                Digite os coeficientes. A última coluna representa as constantes (b).
               </p>
             </div>
 
@@ -182,14 +188,14 @@ const Gaussian = () => {
               className="w-full bg-gradient-to-r from-accent to-primary hover:opacity-90 text-white font-medium shadow-princess"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Solve System
+              Resolver Sistema
             </Button>
           </div>
         </Card>
 
         {solution && (
           <Card className="p-6 bg-gradient-to-r from-accent to-primary text-white mb-8 border-0">
-            <h3 className="font-playfair text-2xl font-bold mb-4">Solution</h3>
+            <h3 className="font-playfair text-2xl font-bold mb-4">Solução</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {solution.map((val, i) => (
                 <div key={i} className="bg-white/20 rounded-lg p-3 backdrop-blur">
@@ -204,7 +210,7 @@ const Gaussian = () => {
         {steps.length > 0 && (
           <Card className="p-6 border-2 border-accent/20">
             <h3 className="font-playfair text-2xl font-bold mb-4 text-foreground">
-              Solution Steps
+              Passos da Solução
             </h3>
             <div className="space-y-2">
               {steps.map((step, i) => (

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import barbieCalc2 from "@/assets/barbie-calculator-2.png";
 
 interface IterationResult {
   iteration: number;
@@ -36,7 +37,7 @@ const Secant = () => {
       
       return eval(sanitized);
     } catch (error) {
-      throw new Error("Invalid function expression");
+      throw new Error("Expressão de função inválida");
     }
   };
 
@@ -56,7 +57,7 @@ const Secant = () => {
         const fx1 = evaluateFunction(x1Val, funcStr);
         
         if (Math.abs(fx1 - fx0) < 1e-10) {
-          toast.error("Division by zero detected. Try different initial values.");
+          toast.error("Divisão por zero detectada. Tente valores iniciais diferentes.");
           return;
         }
         
@@ -76,7 +77,7 @@ const Secant = () => {
         if (error < tol) {
           setFinalRoot(x2);
           setResults(iterations);
-          toast.success("Root found successfully! ✨");
+          toast.success("Raiz encontrada com sucesso! ✨");
           return;
         }
         
@@ -84,10 +85,10 @@ const Secant = () => {
         x1Val = x2;
       }
       
-      toast.warning("Maximum iterations reached");
+      toast.warning("Número máximo de iterações alcançado");
       setResults(iterations);
     } catch (error) {
-      toast.error("Error in calculation. Please check your inputs.");
+      toast.error("Erro no cálculo. Por favor, verifique suas entradas.");
     }
   };
 
@@ -97,41 +98,46 @@ const Secant = () => {
         <Link to="/">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Kingdom
+            Voltar ao Reino
           </Button>
         </Link>
 
-        <div className="text-center mb-8">
-          <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
-            Secant Method
-          </h1>
-          <p className="text-muted-foreground">
-            Discover roots through elegant linear approximations
-          </p>
+        <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
+              Método da Secante
+            </h1>
+            <p className="text-muted-foreground">
+              Descubra raízes através de aproximações lineares elegantes
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <img src={barbieCalc2} alt="Barbie Princesa" className="w-48 h-48 object-contain animate-float drop-shadow-xl" />
+          </div>
         </div>
 
         <Card className="p-8 border-2 border-secondary/20 shadow-royal mb-8">
           <div className="space-y-6">
             <div>
               <Label htmlFor="function" className="text-base font-medium">
-                Function f(x)
+                Função f(x)
               </Label>
               <Input
                 id="function"
                 value={funcStr}
                 onChange={(e) => setFuncStr(e.target.value)}
-                placeholder="e.g., x^3 - x - 2"
+                placeholder="ex: x^3 - x - 2"
                 className="mt-2"
               />
               <p className="text-sm text-muted-foreground mt-1">
-                Use ^ for powers (e.g., x^2), * for multiplication
+                Use ^ para potências (ex: x^2), * para multiplicação
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="x0" className="text-base font-medium">
-                  Initial Point x₀
+                  Ponto Inicial x₀
                 </Label>
                 <Input
                   id="x0"
@@ -145,7 +151,7 @@ const Secant = () => {
 
               <div>
                 <Label htmlFor="x1" className="text-base font-medium">
-                  Second Point x₁
+                  Segundo Ponto x₁
                 </Label>
                 <Input
                   id="x1"
@@ -159,7 +165,7 @@ const Secant = () => {
 
               <div>
                 <Label htmlFor="tolerance" className="text-base font-medium">
-                  Tolerance
+                  Tolerância
                 </Label>
                 <Input
                   id="tolerance"
@@ -177,19 +183,19 @@ const Secant = () => {
               className="w-full bg-gradient-royal hover:opacity-90 text-white font-medium shadow-royal"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Calculate Root
+              Calcular Raiz
             </Button>
           </div>
         </Card>
 
         {finalRoot !== null && (
           <Card className="p-6 bg-gradient-royal text-white mb-8 border-0">
-            <h3 className="font-playfair text-2xl font-bold mb-2">Final Result</h3>
+            <h3 className="font-playfair text-2xl font-bold mb-2">Resultado Final</h3>
             <p className="text-lg">
-              Root found: <span className="font-bold">{finalRoot.toFixed(6)}</span>
+              Raiz encontrada: <span className="font-bold">{finalRoot.toFixed(6)}</span>
             </p>
             <p className="text-sm opacity-90 mt-1">
-              Converged in {results.length} iterations
+              Convergiu em {results.length} iterações
             </p>
           </Card>
         )}
@@ -197,19 +203,19 @@ const Secant = () => {
         {results.length > 0 && (
           <Card className="p-6 border-2 border-secondary/20">
             <h3 className="font-playfair text-2xl font-bold mb-4 text-foreground">
-              Iteration Steps
+              Passos da Iteração
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b-2 border-secondary/20">
-                    <th className="text-left py-3 px-2 font-semibold">Iteration</th>
+                    <th className="text-left py-3 px-2 font-semibold">Iteração</th>
                     <th className="text-right py-3 px-2 font-semibold">x₀</th>
                     <th className="text-right py-3 px-2 font-semibold">x₁</th>
                     <th className="text-right py-3 px-2 font-semibold">f(x₀)</th>
                     <th className="text-right py-3 px-2 font-semibold">f(x₁)</th>
                     <th className="text-right py-3 px-2 font-semibold">x₂</th>
-                    <th className="text-right py-3 px-2 font-semibold">Error</th>
+                    <th className="text-right py-3 px-2 font-semibold">Erro</th>
                   </tr>
                 </thead>
                 <tbody>

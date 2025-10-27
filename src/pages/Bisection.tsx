@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import barbiePrincess from "@/assets/barbie-princess.png";
 
 interface IterationResult {
   iteration: number;
@@ -54,7 +55,7 @@ const Bisection = () => {
       let fbVal = evaluateFunction(bVal, funcStr);
       
       if (faVal * fbVal > 0) {
-        toast.error("Function must have different signs at a and b");
+        toast.error("A função deve ter sinais diferentes em a e b");
         return;
       }
       
@@ -75,7 +76,7 @@ const Bisection = () => {
         if (error < tol) {
           setFinalRoot(c);
           setResults(iterations);
-          toast.success("Root found successfully! ✨");
+          toast.success("Raiz encontrada com sucesso! ✨");
           return;
         }
         
@@ -88,10 +89,10 @@ const Bisection = () => {
         }
       }
       
-      toast.warning("Maximum iterations reached");
+      toast.warning("Número máximo de iterações alcançado");
       setResults(iterations);
     } catch (error) {
-      toast.error("Error in calculation. Please check your inputs.");
+      toast.error("Erro no cálculo. Por favor, verifique suas entradas.");
     }
   };
 
@@ -101,41 +102,46 @@ const Bisection = () => {
         <Link to="/">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Kingdom
+            Voltar ao Reino
           </Button>
         </Link>
 
-        <div className="text-center mb-8">
-          <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
-            Bisection Method
-          </h1>
-          <p className="text-muted-foreground">
-            Find roots by dividing intervals with royal precision
-          </p>
+        <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="font-playfair text-4xl md:text-5xl font-bold text-foreground mb-2">
+              Método da Bisseção
+            </h1>
+            <p className="text-muted-foreground">
+              Encontre raízes dividindo intervalos com precisão real
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <img src={barbiePrincess} alt="Barbie Princesa" className="w-48 h-48 object-contain animate-float drop-shadow-xl" />
+          </div>
         </div>
 
         <Card className="p-8 border-2 border-primary/20 shadow-princess mb-8">
           <div className="space-y-6">
             <div>
               <Label htmlFor="function" className="text-base font-medium">
-                Function f(x)
+                Função f(x)
               </Label>
               <Input
                 id="function"
                 value={funcStr}
                 onChange={(e) => setFuncStr(e.target.value)}
-                placeholder="e.g., x^3 - x - 2"
+                placeholder="ex: x^3 - x - 2"
                 className="mt-2"
               />
               <p className="text-sm text-muted-foreground mt-1">
-                Use ^ for powers (e.g., x^2), * for multiplication
+                Use ^ para potências (ex: x^2), * para multiplicação
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="a" className="text-base font-medium">
-                  Interval Start (a)
+                  Início do Intervalo (a)
                 </Label>
                 <Input
                   id="a"
@@ -149,7 +155,7 @@ const Bisection = () => {
 
               <div>
                 <Label htmlFor="b" className="text-base font-medium">
-                  Interval End (b)
+                  Fim do Intervalo (b)
                 </Label>
                 <Input
                   id="b"
@@ -163,7 +169,7 @@ const Bisection = () => {
 
               <div>
                 <Label htmlFor="tolerance" className="text-base font-medium">
-                  Tolerance
+                  Tolerância
                 </Label>
                 <Input
                   id="tolerance"
@@ -181,19 +187,19 @@ const Bisection = () => {
               className="w-full bg-gradient-princess hover:opacity-90 text-white font-medium shadow-princess"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Calculate Root
+              Calcular Raiz
             </Button>
           </div>
         </Card>
 
         {finalRoot !== null && (
           <Card className="p-6 bg-gradient-princess text-white mb-8 border-0">
-            <h3 className="font-playfair text-2xl font-bold mb-2">Final Result</h3>
+            <h3 className="font-playfair text-2xl font-bold mb-2">Resultado Final</h3>
             <p className="text-lg">
-              Root found: <span className="font-bold">{finalRoot.toFixed(6)}</span>
+              Raiz encontrada: <span className="font-bold">{finalRoot.toFixed(6)}</span>
             </p>
             <p className="text-sm opacity-90 mt-1">
-              Converged in {results.length} iterations
+              Convergiu em {results.length} iterações
             </p>
           </Card>
         )}
@@ -201,18 +207,18 @@ const Bisection = () => {
         {results.length > 0 && (
           <Card className="p-6 border-2 border-primary/20">
             <h3 className="font-playfair text-2xl font-bold mb-4 text-foreground">
-              Iteration Steps
+              Passos da Iteração
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b-2 border-primary/20">
-                    <th className="text-left py-3 px-2 font-semibold">Iteration</th>
+                    <th className="text-left py-3 px-2 font-semibold">Iteração</th>
                     <th className="text-right py-3 px-2 font-semibold">a</th>
                     <th className="text-right py-3 px-2 font-semibold">b</th>
                     <th className="text-right py-3 px-2 font-semibold">c</th>
                     <th className="text-right py-3 px-2 font-semibold">f(c)</th>
-                    <th className="text-right py-3 px-2 font-semibold">Error</th>
+                    <th className="text-right py-3 px-2 font-semibold">Erro</th>
                   </tr>
                 </thead>
                 <tbody>

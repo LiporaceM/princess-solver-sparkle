@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import barbiePrincess from "@/assets/barbie-princess.png";
+import ScientificCalculator from "@/components/ScientificCalculator";
 
 interface IterationResult {
   iteration: number;
@@ -24,11 +25,32 @@ const Bisection = () => {
   const [tolerance, setTolerance] = useState("0.0001");
   const [results, setResults] = useState<IterationResult[]>([]);
   const [finalRoot, setFinalRoot] = useState<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleCalculatorInsert = (value: string) => {
+    const cursorPos = inputRef.current?.selectionStart || funcStr.length;
+    const newValue = funcStr.slice(0, cursorPos) + value + funcStr.slice(cursorPos);
+    setFuncStr(newValue);
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.setSelectionRange(cursorPos + value.length, cursorPos + value.length);
+      }
+    }, 0);
+  };
 
   const evaluateFunction = (x: number, func: string): number => {
     try {
-      const sanitized = func
+      let sanitized = func
         .replace(/\^/g, "**")
+        .replace(/sin\(/g, "Math.sin(")
+        .replace(/cos\(/g, "Math.cos(")
+        .replace(/tan\(/g, "Math.tan(")
+        .replace(/log\(/g, "Math.log10(")
+        .replace(/ln\(/g, "Math.log(")
+        .replace(/sqrt\(/g, "Math.sqrt(")
+        .replace(/exp\(/g, "Math.exp(")
+        .replace(/abs\(/g, "Math.abs(")
         .replace(/([0-9])([x])/g, "$1*$2")
         .replace(/\)([x0-9])/g, ")*$1")
         .replace(/([x0-9])\(/g, "$1*(")
@@ -36,7 +58,7 @@ const Bisection = () => {
       
       return eval(sanitized);
     } catch (error) {
-      throw new Error("Invalid function expression");
+      throw new Error("Expressão de função inválida");
     }
   };
 
@@ -120,77 +142,82 @@ const Bisection = () => {
           </div>
         </div>
 
-        <Card className="p-8 border-2 border-primary/20 shadow-princess mb-8">
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="function" className="text-base font-medium">
-                Função f(x)
-              </Label>
-              <Input
-                id="function"
-                value={funcStr}
-                onChange={(e) => setFuncStr(e.target.value)}
-                placeholder="ex: x^3 - x - 2"
-                className="mt-2"
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                Use ^ para potências (ex: x^2), * para multiplicação
-              </p>
+        <div className="grid lg:grid-cols-2 gap-6 mb-8">
+          <Card className="p-8 border-2 border-primary/20 shadow-princess">
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="function" className="text-base font-medium">
+                  Função f(x)
+                </Label>
+                <Input
+                  ref={inputRef}
+                  id="function"
+                  value={funcStr}
+                  onChange={(e) => setFuncStr(e.target.value)}
+                  placeholder="ex: sin(x) + x^2 - 2"
+                  className="mt-2"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Use a calculadora científica ou digite diretamente
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="a" className="text-base font-medium">
+                    Início do Intervalo (a)
+                  </Label>
+                  <Input
+                    id="a"
+                    type="number"
+                    step="any"
+                    value={a}
+                    onChange={(e) => setA(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="b" className="text-base font-medium">
+                    Fim do Intervalo (b)
+                  </Label>
+                  <Input
+                    id="b"
+                    type="number"
+                    step="any"
+                    value={b}
+                    onChange={(e) => setB(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="tolerance" className="text-base font-medium">
+                    Tolerância
+                  </Label>
+                  <Input
+                    id="tolerance"
+                    type="number"
+                    step="any"
+                    value={tolerance}
+                    onChange={(e) => setTolerance(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+
+              <Button
+                onClick={calculateBisection}
+                className="w-full bg-gradient-princess hover:opacity-90 text-white font-medium shadow-princess"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Calcular Raiz
+              </Button>
             </div>
+          </Card>
 
-            <div className="grid md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="a" className="text-base font-medium">
-                  Início do Intervalo (a)
-                </Label>
-                <Input
-                  id="a"
-                  type="number"
-                  step="any"
-                  value={a}
-                  onChange={(e) => setA(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="b" className="text-base font-medium">
-                  Fim do Intervalo (b)
-                </Label>
-                <Input
-                  id="b"
-                  type="number"
-                  step="any"
-                  value={b}
-                  onChange={(e) => setB(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="tolerance" className="text-base font-medium">
-                  Tolerância
-                </Label>
-                <Input
-                  id="tolerance"
-                  type="number"
-                  step="any"
-                  value={tolerance}
-                  onChange={(e) => setTolerance(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-            </div>
-
-            <Button
-              onClick={calculateBisection}
-              className="w-full bg-gradient-princess hover:opacity-90 text-white font-medium shadow-princess"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Calcular Raiz
-            </Button>
-          </div>
-        </Card>
+          <ScientificCalculator onInsert={handleCalculatorInsert} />
+        </div>
 
         {finalRoot !== null && (
           <Card className="p-6 bg-gradient-princess text-white mb-8 border-0">
